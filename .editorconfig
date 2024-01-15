@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# Default severity for analyzer diagnostics with category 'CodeTiger.Readability'
+dotnet_analyzer_diagnostic.category-CodeTiger.Readability.severity = none

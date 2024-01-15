@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="New Rule Set" Description=" " ToolsVersion="17.0">
+  <Rules AnalyzerId="BlaBla" RuleNamespace="BlaBla">
+    <Rule Id="UNT0001" Action="None" />
+    <Rule Id="UNT0002" Action="None" />
+    <Rule Id="UNT0003" Action="None" />
+    <Rule Id="UNT0004" Action="None" />
+    <Rule Id="UNT0005" Action="None" />
+    <Rule Id="UNT0006" Action="Warning" />
+    <Rule Id="UNT0007" Action="None" />
+    <Rule Id="UNT0008" Action="None" />
+    <Rule Id="UNT0009" Action="Warning" />
+    <Rule Id="UNT0010" Action="None" />
+    <Rule Id="UNT0011" Action="None" />
+    <Rule Id="UNT0012" Action="None" />
+    <Rule Id="UNT0013" Action="None" />
+    <Rule Id="UNT0014" Action="None" />
+    <Rule Id="UNT0015" Action="None" />
+    <Rule Id="UNT0016" Action="None" />
+    <Rule Id="UNT0017" Action="None" />
+    <Rule Id="UNT0018" Action="None" />
+    <Rule Id="UNT0019" Action="None" />
+    <Rule Id="UNT0020" Action="None" />
+    <Rule Id="UNT0021" Action="None" />
+    <Rule Id="UNT0022" Action="None" />
+    <Rule Id="UNT0023" Action="None" />
+    <Rule Id="UNT0024" Action="None" />
+    <Rule Id="UNT0025" Action="None" />
+    <Rule Id="UNT0026" Action="None" />
+    <Rule Id="UNT0027" Action="Warning" />
+    <Rule Id="UNT0028" Action="Warning" />
+    <Rule Id="UNT0029" Action="None" />
+    <Rule Id="UNT0030" Action="None" />
+    <Rule Id="UNT0031" Action="Warning" />
+  </Rules>
+</RuleSet>
