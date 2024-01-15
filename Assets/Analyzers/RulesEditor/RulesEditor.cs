@@ -9,8 +9,9 @@ using System;
 
 public class RulesEditor : EditorWindow
 {
-	private IEnumerable<DiagnosticDescriptorEssentials> extractedDescriptors = Enumerable.Empty<DiagnosticDescriptorEssentials>();
+	private ILookup<string, AnalyzerRule> extractedAnalyzers;
 	private Vector2 scrollPosition;
+	private GUIStyle analyzerNameLabelStyle = GUIStyle.none;
 
 	[MenuItem("Tools/RulesEditor")]
 	public static void ShowWindow() => GetWindow(typeof(RulesEditor));
@@ -18,27 +19,31 @@ public class RulesEditor : EditorWindow
 	[MenuItem("Tools/DebugMethod")]
 	public static void DebugMethod() => _ = RulesetLoader.LoadRulesetFile();
 
+	protected void OnEnable()
+	{
+		analyzerNameLabelStyle = new GUIStyle() { fontStyle = FontStyle.Bold, };
+		analyzerNameLabelStyle.normal.textColor = Color.white;
+	}
+
 	protected void OnGUI()
 	{
-		if (GUILayout.Button(nameof(RulesExtractor.ExtractDescriptors)))
-			extractedDescriptors = RulesExtractor.ExtractDescriptors();
+		if (GUILayout.Button(nameof(RulesExtractor.ExtractRules)))
+			extractedAnalyzers = RulesExtractor.ExtractRules();
 
-		if (extractedDescriptors.Any())
+		if (extractedAnalyzers?.Any() == true)
 		{
 			var labelStyle = new GUIStyle(GUI.skin.label) { wordWrap = true };
 			scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 			GUILayout.BeginVertical();
-			foreach (var descriptor in extractedDescriptors)
+			foreach (var analyzer in extractedAnalyzers)
 			{
-				GUILayout.BeginHorizontal();
-				GUILayout.Label(descriptor.Id, GUILayout.Width(70));
-				GUILayout.Label(descriptor.Title, labelStyle, GUILayout.Width(300), GUILayout.ExpandWidth(false));
-				GUILayout.Label(descriptor.Category);
-				GUILayout.FlexibleSpace();
-				GUILayout.EndHorizontal();
+				GUILayout.Label(analyzer.Key, analyzerNameLabelStyle);
+				foreach (var rule in analyzer)
+					rule.DrawRule();
+				GUILayout.Space(20);
 			}
 			GUILayout.EndVertical();
 			GUILayout.EndScrollView();
 		}
-	}	
+	}
 }

@@ -16,12 +16,14 @@ public class RulesExtractor
 
 	private IEnumerable<DiagnosticDescriptorEssentials> extractedDescriptors = Enumerable.Empty<DiagnosticDescriptorEssentials>();
 
-	public static IEnumerable<DiagnosticDescriptorEssentials> ExtractDescriptors()
+	public static ILookup<string, AnalyzerRule> ExtractRules()
 	{
 		var roslynAnalyzersGUIDS = AssetDatabase.FindAssets(AnalyzersFilter)
 			.Except(AssetDatabase.FindAssets(AnalyzersDependenciesFilter));
-		var extractorPath = Path.GetFullPath(ExtractorLocalPath);
-		return roslynAnalyzersGUIDS.SelectMany(ExtractDescriptorsFromSingleAnalyzersLibrary).ToList();
+		return roslynAnalyzersGUIDS
+			.SelectMany(ExtractDescriptorsFromSingleAnalyzersLibrary,
+			(guid, descriptor) => (name: AssetNameFromGUID(guid), rule: new AnalyzerRule(descriptor, AssetNameFromGUID(guid))))
+			.ToLookup(analyerName => analyerName.name, item => item.rule);
 	}
 
 	private static IEnumerable<DiagnosticDescriptorEssentials> ExtractDescriptorsFromSingleAnalyzersLibrary(string assetGUID)
@@ -38,6 +40,12 @@ public class RulesExtractor
 			UnityEngine.Debug.LogError(exception);
 			return Enumerable.Empty<DiagnosticDescriptorEssentials>();
 		}
+	}
+
+	private static string AssetNameFromGUID(string guid)
+	{
+		var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+		return Path.GetFileNameWithoutExtension(assetPath);
 	}
 
 	private static string StartProcessAndGetOutput(string exePath, string arguments)
