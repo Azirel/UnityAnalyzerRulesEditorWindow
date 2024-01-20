@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class RulesEditorWindow : EditorWindow
 {
-	private ILookup<string, AnalyzerRule> rules = Utilities.Empty<string, AnalyzerRule>();
+	private ILookup<string, AnalyzerRule> rules = Utilities.EmptyLookup<string, AnalyzerRule>();
 	//private IList rulesList => rules.SelectMany(group => group).ToList();
 
 	private IList rulesList => new List<AnalyzerRule>()

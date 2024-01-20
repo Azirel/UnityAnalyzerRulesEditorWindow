@@ -23,7 +23,7 @@ public class RulesExtractor
 	public static ILookup<string, AnalyzerRule> GetCachedRules()
 		=> EditorPrefs.HasKey(cachedJsonKey)
 			? JsonConvert.DeserializeObject<Lookup<string, AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey))
-			: Utilities.Empty<string, AnalyzerRule>();
+			: Utilities.EmptyLookup<string, AnalyzerRule>();
 
 	public static ILookup<string, AnalyzerRule> ExtractRules()
 		=> AssetDatabase.FindAssets(AnalyzersFilter)

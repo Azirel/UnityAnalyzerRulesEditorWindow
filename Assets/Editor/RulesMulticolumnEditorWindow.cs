@@ -10,39 +10,38 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 {
 	[SerializeField] private VisualTreeAsset uxmlDocument;
 
-	//private ILookup<string, AnalyzerRule> rules = Utilities.Empty<string, AnalyzerRule>();
+	private ILookup<string, AnalyzerRule> rules = Utilities.EmptyLookup<string, AnalyzerRule>();
 
-	//private IList rulesList => rules.SelectMany(group => group).ToList();
+	private IList<AnalyzerRule> rulesList => rules.SelectMany(group => group).ToList();
 
-	private IList rulesList => new List<AnalyzerRule>()
-	{
-		new AnalyzerRule("id01", "test"),
-		new AnalyzerRule("id02", "test"),
-		new AnalyzerRule("id03", "test"),
-	};
+	private RulesTableView speadSheet;
 
 	[MenuItem("Tools/Multicolumn window")]
-	public static void Show()
+	public static new void Show()
 		=> GetWindow<RulesMulticolumnEditorWindow>(nameof(RulesMulticolumnEditorWindow));
 
 	protected void CreateGUI()
 	{
 		uxmlDocument.CloneTree(rootVisualElement);
-		var listView = rootVisualElement.Q<MultiColumnListView>();
-
-		listView.itemsSource = rulesList;
-		listView.columns["ID"].makeCell = () => new Label();
-		listView.columns["Title"].makeCell = () => new Label();
-
-		listView.columns["ID"].bindCell = BindIdCell;
-		listView.columns["Title"].bindCell = BindTitleCell;
-
-		listView.Rebuild();
+		MapRulesExtractionButton();
+		MapRulesToSpreadSheet();
 	}
 
-	private void BindTitleCell(VisualElement element, int itemIndex)
-		=> (element as Label).text = (rulesList[itemIndex] as AnalyzerRule).Id;
+	private void MapRulesExtractionButton()
+	{
+		var loadButton = rootVisualElement.Q<Button>(name: "LoadAnalyzers");
+		loadButton.RegisterCallback<ClickEvent>(HandleLoadRules);
+	}
 
-	private void BindIdCell(VisualElement element, int itemIndex)
-		=> (element as Label).text = (rulesList[itemIndex] as AnalyzerRule).AnalyzerId;
+	private void MapRulesToSpreadSheet()
+	{
+		speadSheet = rootVisualElement.Q<RulesTableView>();
+		speadSheet.Init(rulesList);
+	}
+
+	private void HandleLoadRules(ClickEvent _)
+	{
+		rules = RulesExtractor.ExtractRules();
+		speadSheet.Init(rulesList);
+	}
 }
