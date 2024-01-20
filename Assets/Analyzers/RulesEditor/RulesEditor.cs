@@ -44,8 +44,8 @@ public class RulesEditor : EditorWindow
 			foreach (var analyzer in extractedAnalyzers)
 			{
 				GUILayout.Label(analyzer.Key, analyzerNameLabelStyle);
-				foreach (var rule in analyzer)
-					rule.DrawRule();
+				//foreach (var rule in analyzer)
+				//	rule.DrawRule();
 				GUILayout.Space(20);
 			}
 			GUILayout.EndVertical();

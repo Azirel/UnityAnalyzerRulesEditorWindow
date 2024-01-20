@@ -12,19 +12,40 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 
 	private ILookup<string, AnalyzerRule> rules = Utilities.EmptyLookup<string, AnalyzerRule>();
 
-	private IList<AnalyzerRule> rulesList => rules.SelectMany(group => group).ToList();
+	private IList<AnalyzerRule> rulesList => rules
+		.SelectMany(group => group)
+		.Where(rule => rule.Match(searchValue))
+		.ToList();
 
-	private RulesTableView speadSheet;
+	private string searchValue = string.Empty;
+
+	private RulesTableView spreadSheet;
 
 	[MenuItem("Tools/Multicolumn window")]
 	public static new void Show()
 		=> GetWindow<RulesMulticolumnEditorWindow>(nameof(RulesMulticolumnEditorWindow));
 
+	//[MenuItem("Tools/Clear")]
+	//public static void ClearContent() => spreadSheet.viewController.ClearItems();
+
 	protected void CreateGUI()
 	{
 		uxmlDocument.CloneTree(rootVisualElement);
 		MapRulesExtractionButton();
+		MapSearch();
 		MapRulesToSpreadSheet();
+	}
+
+	private void MapSearch()
+	{
+		var searchField = rootVisualElement.Q<TextField>(name: "Search");
+		searchField.RegisterValueChangedCallback(FilterRules);
+	}
+
+	private void FilterRules(ChangeEvent<string> evt)
+	{
+		searchValue = evt.newValue;
+		spreadSheet.Init(rulesList);
 	}
 
 	private void MapRulesExtractionButton()
@@ -35,13 +56,15 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 
 	private void MapRulesToSpreadSheet()
 	{
-		speadSheet = rootVisualElement.Q<RulesTableView>();
-		speadSheet.Init(rulesList);
+		spreadSheet = rootVisualElement.Q<RulesTableView>();
+		spreadSheet.Init(rulesList);
 	}
 
 	private void HandleLoadRules(ClickEvent _)
 	{
 		rules = RulesExtractor.ExtractRules();
-		speadSheet.Init(rulesList);
+		spreadSheet.Init(rulesList);
 	}
+
+	public void Clear() => spreadSheet.Clear();
 }
