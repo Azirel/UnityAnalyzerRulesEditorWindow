@@ -9,7 +9,8 @@ using System;
 
 public class RulesEditor : EditorWindow
 {
-	private ILookup<string, AnalyzerRule> extractedAnalyzers;
+	[System.NonSerialized]
+	private static ILookup<string, AnalyzerRule> extractedAnalyzers;
 	private Vector2 scrollPosition;
 	private GUIStyle analyzerNameLabelStyle = GUIStyle.none;
 
@@ -23,12 +24,17 @@ public class RulesEditor : EditorWindow
 	{
 		analyzerNameLabelStyle = new GUIStyle() { fontStyle = FontStyle.Bold, };
 		analyzerNameLabelStyle.normal.textColor = Color.white;
+		if (extractedAnalyzers?.Any() != true)
+			extractedAnalyzers = RulesExtractor.GetCachedRules();
 	}
 
 	protected void OnGUI()
 	{
 		if (GUILayout.Button(nameof(RulesExtractor.ExtractRules)))
+		{
 			extractedAnalyzers = RulesExtractor.ExtractRules();
+			RulesExtractor.CacheRules(extractedAnalyzers);
+		}
 
 		if (extractedAnalyzers?.Any() == true)
 		{

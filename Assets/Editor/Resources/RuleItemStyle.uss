@@ -1,0 +1,9 @@
+.rule-item-normal {
+    background-color: rgb(82, 82, 82);
+}
+
+.rule-item-selected {
+    background-color: rgb(42, 57, 75);
+}
+
+

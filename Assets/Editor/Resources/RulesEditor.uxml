@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement class="buttons-container">
+        <ui:Button text="Load Analyzers" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadAnalyzers" />
+        <ui:ListView focusable="true" name="RulesList" header-title="Title" virtualization-method="DynamicHeight" fixed-item-height="100" />
+    </ui:VisualElement>
+</ui:UXML>

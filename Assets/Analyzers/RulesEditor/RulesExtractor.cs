@@ -13,18 +13,24 @@ public class RulesExtractor
 	private const string ExtractorLocalPath = @"Assets\.RulesExtractorCLI\RulesExtracorCLI.exe";
 	private static string extractorPath;
 	private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
+	private const string cachedJsonKey = "AnalyzersJsonCache";
 
 	private IEnumerable<DiagnosticDescriptorEssentials> extractedDescriptors = Enumerable.Empty<DiagnosticDescriptorEssentials>();
 
+	public static void CacheRules(ILookup<string, AnalyzerRule> rules)
+		=> EditorPrefs.SetString(cachedJsonKey, JsonConvert.SerializeObject(rules));
+
+	public static ILookup<string, AnalyzerRule> GetCachedRules()
+		=> EditorPrefs.HasKey(cachedJsonKey)
+			? JsonConvert.DeserializeObject<Lookup<string, AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey))
+			: Utilities.Empty<string, AnalyzerRule>();
+
 	public static ILookup<string, AnalyzerRule> ExtractRules()
-	{
-		var roslynAnalyzersGUIDS = AssetDatabase.FindAssets(AnalyzersFilter)
-			.Except(AssetDatabase.FindAssets(AnalyzersDependenciesFilter));
-		return roslynAnalyzersGUIDS
+		=> AssetDatabase.FindAssets(AnalyzersFilter)
+			.Except(AssetDatabase.FindAssets(AnalyzersDependenciesFilter))
 			.SelectMany(ExtractDescriptorsFromSingleAnalyzersLibrary,
 			(guid, descriptor) => (name: AssetNameFromGUID(guid), rule: new AnalyzerRule(descriptor, AssetNameFromGUID(guid))))
 			.ToLookup(analyerName => analyerName.name, item => item.rule);
-	}
 
 	private static IEnumerable<DiagnosticDescriptorEssentials> ExtractDescriptorsFromSingleAnalyzersLibrary(string assetGUID)
 	{
