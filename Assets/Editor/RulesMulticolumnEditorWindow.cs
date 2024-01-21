@@ -19,14 +19,12 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 
 	private string searchValue = string.Empty;
 
-	private RulesTableView spreadSheet;
+	private RulesTableView rulesSpreadSheetView;
+	private RuleSetsTableView setsSpreadSheetView;
 
 	[MenuItem("Tools/Multicolumn window")]
 	public static new void Show()
 		=> GetWindow<RulesMulticolumnEditorWindow>(nameof(RulesMulticolumnEditorWindow));
-
-	//[MenuItem("Tools/Clear")]
-	//public static void ClearContent() => spreadSheet.viewController.ClearItems();
 
 	protected void CreateGUI()
 	{
@@ -34,7 +32,26 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 		MapRulesExtractionButton();
 		MapSearch();
 		MapRulesToSpreadSheet();
+		MapRulesets();
 	}
+
+	private void MapRulesets()
+	{
+		setsSpreadSheetView = rootVisualElement.Q<RuleSetsTableView>();
+		setsSpreadSheetView.UpdateItems();
+		setsSpreadSheetView.Init();
+		var updateRuleSetsButton = rootVisualElement.Q<Button>(name: "UpdateRulesets");
+		updateRuleSetsButton.RegisterCallback<ClickEvent>(UpdateRulesets);
+		setsSpreadSheetView.LoadByPath += LoadFromRuleSet;
+	}
+
+	private void LoadFromRuleSet(string obj)
+	{
+		throw new NotImplementedException();
+	}
+
+	private void UpdateRulesets(ClickEvent evt)
+		=> setsSpreadSheetView.UpdateItems();
 
 	private void MapSearch()
 	{
@@ -45,7 +62,7 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 	private void FilterRules(ChangeEvent<string> evt)
 	{
 		searchValue = evt.newValue;
-		spreadSheet.Init(rulesList);
+		rulesSpreadSheetView.Init(rulesList);
 	}
 
 	private void MapRulesExtractionButton()
@@ -56,15 +73,15 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 
 	private void MapRulesToSpreadSheet()
 	{
-		spreadSheet = rootVisualElement.Q<RulesTableView>();
-		spreadSheet.Init(rulesList);
+		rulesSpreadSheetView = rootVisualElement.Q<RulesTableView>();
+		rulesSpreadSheetView.Init(rulesList);
 	}
 
 	private void HandleLoadRules(ClickEvent _)
 	{
 		rules = RulesExtractor.ExtractRules();
-		spreadSheet.Init(rulesList);
+		rulesSpreadSheetView.Init(rulesList);
 	}
 
-	public void Clear() => spreadSheet.Clear();
+	public void Clear() => rulesSpreadSheetView.Clear();
 }

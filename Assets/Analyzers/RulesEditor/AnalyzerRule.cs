@@ -1,13 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 public class AnalyzerRule : ISearchable
 {
 	public readonly string Id;
 	public readonly DiagnosticDescriptorEssentials Descriptor;
 	public readonly string AnalyzerId;
-	public DiagnosticSeverity Severity { get; set; } = DiagnosticSeverity.Hidden;
+	private DiagnosticSeverity severity = DiagnosticSeverity.Hidden;
+
+	public DiagnosticSeverity Severity
+	{
+		get => severity;
+		set
+		{
+			if (severity != value)
+			{
+				severity = value;
+				SeverityValueChange?.Invoke(severity);
+			}
+		}
+	}
+	public event Action<DiagnosticSeverity> SeverityValueChange;
 
 	private IEnumerable<string> GetSearchableContent()
 	{
@@ -33,5 +47,7 @@ public class AnalyzerRule : ISearchable
 		=> Severity = severity;
 
 	public bool Match(string query)
-		=> string.IsNullOrEmpty(query) ? true : GetSearchableContent().Any(@string => @string.Contains(query));
+		=> String.IsNullOrEmpty(query)
+		|| GetSearchableContent().
+		Any(@string => @string.Contains(query));
 }
