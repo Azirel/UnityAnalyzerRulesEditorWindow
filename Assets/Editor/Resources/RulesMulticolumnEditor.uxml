@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:GroupBox style="margin-right: 0; margin-top: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;">
-        <ui:Foldout text="Rule sets" value="true" name="RulesetsFoldout" style="max-height: 4000px;">
-            <ui:Button text="Update rulesets" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UpdateRulesets" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; min-width: 100px; min-height: 20px; max-width: 120px; max-height: 20px; align-items: stretch; align-self: flex-end;" />
+    <ui:GroupBox style="margin-right: 0; margin-top: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; display: flex; flex-shrink: 1;">
+        <ui:Foldout text="Rule sets" value="true" name="RulesetsFoldout" style="display: flex;">
+            <ui:Button text="Update rulesets" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UpdateRulesets" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; min-width: 100px; min-height: 20px; max-width: 120px; max-height: 20px; align-items: stretch; align-self: flex-end; flex-shrink: 1;" />
             <ui:RuleSetsTableView selection-type="Multiple" virtualization-method="DynamicHeight" name="RulesTable">
                 <ui:Columns>
                     <ui:Column name="Path" title="Ruleset" width="500" />
@@ -11,8 +11,8 @@
             </ui:RuleSetsTableView>
         </ui:Foldout>
         <ui:Button text="Extract analyer rules" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadAnalyzers" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; min-height: 30px;" />
-        <ui:TextField picking-mode="Ignore" label="Search" name="Search" />
-        <ui:RulesTableView selection-type="Multiple" name="RulesTable" style="align-self: stretch;">
+        <ui:TextField picking-mode="Ignore" label="Search" name="Search" style="flex-direction: row;" />
+        <ui:RulesTableView selection-type="Multiple" name="RulesTable" style="flex-grow: 1;">
             <ui:Columns>
                 <ui:Column name="ID" title="ID" width="85" />
                 <ui:Column name="Title" title="Title" width="500" />
