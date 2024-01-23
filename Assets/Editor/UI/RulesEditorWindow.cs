@@ -29,10 +29,6 @@ namespace Azirel
 		public static new void Show()
 			=> GetWindow<RulesEditorWindow>(nameof(RulesEditorWindow));
 
-		[MenuItem("Tools/Load cached")]
-		public static void LoadCachedRules()
-			=> GetWindow<RulesEditorWindow>().rulesMainSource = RulesExtractor.GetCachedRules();
-
 		protected void CreateGUI()
 		{
 			uxmlDocument.CloneTree(rootVisualElement);

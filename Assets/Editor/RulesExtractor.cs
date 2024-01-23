@@ -11,7 +11,6 @@ namespace Azirel
 	public class RulesExtractor
 	{
 		private const string AnalyzersFilter = "l:RoslynAnalyzer";
-		private const string AnalyzersDependenciesFilter = "l:RoslynAnalyzerDependency";
 		private const string ExtractorLocalPath = @"Assets\.RulesExtractorCLI\RulesExtracorCLI.exe";
 		private const string CachedJsonKey = "AnalyzersJsonCache";
 		private static readonly string extractorPath;
@@ -31,10 +30,11 @@ namespace Azirel
 
 		public static ILookup<string, AnalyzerRule> ExtractRules()
 			=> AssetDatabase.FindAssets(AnalyzersFilter)
-				.Except(AssetDatabase.FindAssets(AnalyzersDependenciesFilter))
-				.SelectMany(ExtractDescriptorsFromSingleAnalyzersLibrary,
-				(guid, descriptor) => (name: AssetNameFromGUID(guid), rule: new AnalyzerRule(descriptor, AssetNameFromGUID(guid))))
-				.ToLookup(analyerName => analyerName.name, item => item.rule);
+				.Select(guid => (guid, ExtractDescriptorsFromSingleAnalyzersLibrary(guid)))
+				.Where(rules => rules.Item2?.Any() == true)
+				.SelectMany(group => group.Item2,
+				(group, descriptor) => (name: AssetNameFromGUID(group.guid), rule: new AnalyzerRule(descriptor, AssetNameFromGUID(group.guid))))
+				.ToLookup(analyzerName => analyzerName.name, item => item.rule);
 
 		private static IEnumerable<DiagnosticDescriptorEssentials> ExtractDescriptorsFromSingleAnalyzersLibrary(string assetGUID)
 		{
@@ -43,7 +43,9 @@ namespace Azirel
 				var assetPath = AssetDatabase.GUIDToAssetPath(assetGUID);
 				var assetFullPath = Path.GetFullPath(assetPath);
 				var analyzerJson = StartProcessAndGetOutput(ExtractorPath, assetFullPath);
-				return JsonConvert.DeserializeObject<IEnumerable<DiagnosticDescriptorEssentials>>(analyzerJson);
+				var result = JsonConvert.DeserializeObject<IEnumerable<DiagnosticDescriptorEssentials>>(analyzerJson);
+				result = result?.Any() == true ? result : Enumerable.Empty<DiagnosticDescriptorEssentials>();
+				return result;
 			}
 			catch (Exception exception)
 			{
