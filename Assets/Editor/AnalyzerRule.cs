@@ -11,6 +11,7 @@ namespace Azirel
 		public readonly DiagnosticDescriptorEssentials Descriptor;
 		public readonly string AnalyzerId;
 		private DiagnosticSeverity severity = DiagnosticSeverity.Hidden;
+		public event Action<DiagnosticSeverity> SeverityValueChange;
 
 		public DiagnosticSeverity Severity
 		{
@@ -23,18 +24,6 @@ namespace Azirel
 					SeverityValueChange?.Invoke(severity);
 				}
 			}
-		}
-
-		public event Action<DiagnosticSeverity> SeverityValueChange;
-
-		private IEnumerable<string> GetSearchableContent()
-		{
-			yield return Id;
-			yield return AnalyzerId;
-			yield return Descriptor.Title;
-			yield return Descriptor.Category;
-			yield return Descriptor.HelpLinkUri;
-			yield return Descriptor.Description;
 		}
 
 		public AnalyzerRule(string id, string analyzerId, DiagnosticSeverity severity = DiagnosticSeverity.None)
@@ -55,5 +44,15 @@ namespace Azirel
 			=> String.IsNullOrEmpty(query)
 			|| GetSearchableContent().
 			Any(@string => @string.Contains(query));
+
+		private IEnumerable<string> GetSearchableContent()
+		{
+			yield return Id;
+			yield return AnalyzerId;
+			yield return Descriptor.Title;
+			yield return Descriptor.Category;
+			yield return Descriptor.HelpLinkUri;
+			yield return Descriptor.Description;
+		}
 	}
 }

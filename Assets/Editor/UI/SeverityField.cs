@@ -5,20 +5,14 @@ namespace UnityEngine.UIElements
 {
 	public class SeverityField : EnumField
 	{
-		public new class UxmlFactory : UxmlFactory<SeverityField, UxmlTraits> 
-		{
-		}
-
 		private AnalyzerRule rule;
 
-		public SeverityField() : base(default(DiagnosticSeverity))
-		{
-		}
+		public SeverityField() : base(default(DiagnosticSeverity)) { }
 
 		public void BindRule(AnalyzerRule rule)
 		{
 			this.rule = rule;
-			this.RegisterValueChangedCallback(HandleValueChange);
+			_ = this.RegisterValueChangedCallback(HandleValueChange);
 			rule.SeverityValueChange += UpdateSeverity;
 			UpdateSeverity(rule.Severity);
 		}
@@ -30,5 +24,7 @@ namespace UnityEngine.UIElements
 
 		private void UpdateSeverity(DiagnosticSeverity severity)
 				=> SetValueWithoutNotify(severity);
+
+		public new class UxmlFactory : UxmlFactory<SeverityField, UxmlTraits> { }
 	}
 }

@@ -13,18 +13,18 @@ namespace Azirel
 		private const string AnalyzersFilter = "l:RoslynAnalyzer";
 		private const string AnalyzersDependenciesFilter = "l:RoslynAnalyzerDependency";
 		private const string ExtractorLocalPath = @"Assets\.RulesExtractorCLI\RulesExtracorCLI.exe";
-		private static string extractorPath;
+		private const string CachedJsonKey = "AnalyzersJsonCache";
+		private static readonly string extractorPath;
 		private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
-		private const string cachedJsonKey = "AnalyzersJsonCache";
 
 		public static void CacheRules(ILookup<string, AnalyzerRule> rules)
-			=> EditorPrefs.SetString(cachedJsonKey, JsonConvert.SerializeObject(rules.SelectMany(group => group.ToList())));
+			=> EditorPrefs.SetString(CachedJsonKey, JsonConvert.SerializeObject(rules.SelectMany(group => group.ToList())));
 
 		public static ILookup<string, AnalyzerRule> GetCachedRules()
 		{
-			var rules = JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey));
-			return 	EditorPrefs.HasKey(cachedJsonKey)
-				? JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey))
+			var rules = JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(CachedJsonKey));
+			return 	EditorPrefs.HasKey(CachedJsonKey)
+				? JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(CachedJsonKey))
 			.ToLookup(keySelector: rule => rule.AnalyzerId, elementSelector: rule => rule)
 				: Utilities.EmptyLookup<string, AnalyzerRule>();
 		}
@@ -66,7 +66,7 @@ namespace Azirel
 			extractorProcess.StartInfo.FileName = exePath;
 			extractorProcess.StartInfo.Arguments = arguments;
 			extractorProcess.StartInfo.CreateNoWindow = true;
-			extractorProcess.Start();
+			_ = extractorProcess.Start();
 			using var output = extractorProcess.StandardOutput;
 			var outputText = output.ReadToEnd();
 			extractorProcess.WaitForExit();

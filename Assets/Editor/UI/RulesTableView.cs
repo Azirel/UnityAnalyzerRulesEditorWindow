@@ -8,10 +8,6 @@ namespace UnityEngine.UIElements
 {
 	public class RulesTableView : MultiColumnListView
 	{
-		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits>
-		{
-		}
-
 		private IList<AnalyzerRule> rules = Enumerable.Empty<AnalyzerRule>().ToList();
 
 		public void Init(IList<AnalyzerRule> rules)
@@ -40,7 +36,7 @@ namespace UnityEngine.UIElements
 			var enumField = element as SeverityField;
 			var rule = rules[itemIndex];
 			enumField.BindRule(rule);
-			enumField.RegisterValueChangedCallback(HandleSelectedElementsSeverityChange);
+			_ = enumField.RegisterValueChangedCallback(HandleSelectedElementsSeverityChange);
 		}
 
 		private void HandleSelectedElementsSeverityChange(ChangeEvent<Enum> evt)
@@ -62,5 +58,7 @@ namespace UnityEngine.UIElements
 			label.text = String.IsNullOrEmpty(rule.Descriptor.HelpLinkUri)
 				? rule.Id : $"<a href=\"{rule.Descriptor.HelpLinkUri}\">{rule.Id}</a>";
 		}
+
+		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits> { }
 	}
 }

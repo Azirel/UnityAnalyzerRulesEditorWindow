@@ -6,14 +6,9 @@ namespace UnityEngine.UIElements
 {
 	public class RuleSetsTableView : MultiColumnListView
 	{
-		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits>
-		{
-		}
-
+		private string ruleSetsSearchFilter = "glob:\"Assets/**.ruleset\"";
 		public event Action<string> LoadByPath;
 		public event Action<string> SaveByPath;
-
-		private string ruleSetsSearchFilter = "glob:\"Assets/**.ruleset\"";
 
 		public void UpdateItems()
 			=> itemsSource = AssetDatabase.FindAssets(ruleSetsSearchFilter)
@@ -55,5 +50,7 @@ namespace UnityEngine.UIElements
 
 		private void BindPathCell(VisualElement element, int itemIndex)
 			=> (element as Label).text = itemsSource[itemIndex] as string;
+
+		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits> { }
 	}
 }

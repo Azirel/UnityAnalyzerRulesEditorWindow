@@ -10,6 +10,9 @@ namespace Azirel
 	public class RulesEditorWindow : EditorWindow
 	{
 		[SerializeField] private VisualTreeAsset uxmlDocument;
+		private string searchValue = String.Empty;
+		private RulesTableView rulesSpreadSheetView;
+		private RuleSetsTableView setsSpreadSheetView;
 
 		private ILookup<string, AnalyzerRule> rulesMainSource = Utilities.EmptyLookup<string, AnalyzerRule>();
 
@@ -21,11 +24,6 @@ namespace Azirel
 			.SelectMany(group => group)
 			.Where(rule => rule.Match(searchValue))
 			.ToList();
-
-		private string searchValue = String.Empty;
-
-		private RulesTableView rulesSpreadSheetView;
-		private RuleSetsTableView setsSpreadSheetView;
 
 		[MenuItem("Tools/Rules Editor ")]
 		public static new void Show()
@@ -45,21 +43,23 @@ namespace Azirel
 			MapRulesets();
 		}
 
+		private void OnEnable() => searchValue = String.Empty;
+
 		private void MapRulesets()
 		{
 			setsSpreadSheetView = rootVisualElement.Q<RuleSetsTableView>();
 			setsSpreadSheetView.UpdateItems();
 			setsSpreadSheetView.Init();
 			var updateRuleSetsButton = rootVisualElement.Q<Button>(name: "UpdateRulesets");
-			updateRuleSetsButton.RegisterCallback<ClickEvent>(UpdateRulesets);
-			setsSpreadSheetView.LoadByPath += LoadFromRuleSet;
-			setsSpreadSheetView.SaveByPath += SaveToRuleSet;
+			updateRuleSetsButton.RegisterCallback<ClickEvent>(HandleUpdateRulesets);
+			setsSpreadSheetView.LoadByPath += HandleLoadFromRuleSet;
+			setsSpreadSheetView.SaveByPath += HandleSaveToRuleSet;
 		}
 
-		private void SaveToRuleSet(string ruleSetPath)
+		private void HandleSaveToRuleSet(string ruleSetPath)
 			=> RulesetIO.SaveTo(ruleSetPath, rulesMainSource);
 
-		private void LoadFromRuleSet(string path)
+		private void HandleLoadFromRuleSet(string path)
 		{
 			var loadedRules = RulesetIO.LoadRulesetFile(path).ToList();
 			if (unfilteredRulesList.Any())
@@ -67,21 +67,21 @@ namespace Azirel
 				var loadedSeverities = unfilteredRulesList
 					.Join(loadedRules, rule => rule.Id, rule => rule.id,
 					(currentRule, loadedValue) => (currentRule, loadedValue));
-				foreach (var rule in loadedSeverities)
-					rule.currentRule.Severity = rule.loadedValue.severity;
+				foreach (var (currentRule, loadedValue) in loadedSeverities)
+					currentRule.Severity = loadedValue.severity;
 			}
 		}
 
-		private void UpdateRulesets(ClickEvent evt)
+		private void HandleUpdateRulesets(ClickEvent evt)
 			=> setsSpreadSheetView.UpdateItems();
 
 		private void MapSearch()
 		{
 			var searchField = rootVisualElement.Q<TextField>(name: "Search");
-			searchField.RegisterValueChangedCallback(FilterRules);
+			_ = searchField.RegisterValueChangedCallback(HandleFilterChange);
 		}
 
-		private void FilterRules(ChangeEvent<string> evt)
+		private void HandleFilterChange(ChangeEvent<string> evt)
 		{
 			searchValue = evt.newValue;
 			rulesSpreadSheetView.Init(filteredRulesList);
@@ -107,7 +107,5 @@ namespace Azirel
 			rulesSpreadSheetView.Init(filteredRulesList);
 			RulesExtractor.CacheRules(rulesMainSource);
 		}
-
-		public void Clear() => rulesSpreadSheetView.Clear();
 	}
 }
