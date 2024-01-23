@@ -1,11 +1,6 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Newtonsoft.Json;
 using System.Linq;
-using System;
 
 public class RulesEditor : EditorWindow
 {
@@ -16,9 +11,6 @@ public class RulesEditor : EditorWindow
 
 	[MenuItem("Tools/RulesEditor")]
 	public static void ShowWindow() => GetWindow(typeof(RulesEditor));
-
-	[MenuItem("Tools/DebugMethod")]
-	public static void DebugMethod() => _ = RulesetLoader.LoadRulesetFile();
 
 	protected void OnEnable()
 	{

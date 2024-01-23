@@ -10,14 +10,18 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 {
 	[SerializeField] private VisualTreeAsset uxmlDocument;
 
-	private ILookup<string, AnalyzerRule> rules = Utilities.EmptyLookup<string, AnalyzerRule>();
+	private ILookup<string, AnalyzerRule> rulesMainSource = Utilities.EmptyLookup<string, AnalyzerRule>();
 
-	private IList<AnalyzerRule> rulesList => rules
+	private IList<AnalyzerRule> unfilteredRulesList => rulesMainSource
+		.SelectMany(group => group)
+		.ToList();
+
+	private IList<AnalyzerRule> filteredRulesList => rulesMainSource
 		.SelectMany(group => group)
 		.Where(rule => rule.Match(searchValue))
 		.ToList();
 
-	private string searchValue = string.Empty;
+	private string searchValue = String.Empty;
 
 	private RulesTableView rulesSpreadSheetView;
 	private RuleSetsTableView setsSpreadSheetView;
@@ -43,11 +47,21 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 		var updateRuleSetsButton = rootVisualElement.Q<Button>(name: "UpdateRulesets");
 		updateRuleSetsButton.RegisterCallback<ClickEvent>(UpdateRulesets);
 		setsSpreadSheetView.LoadByPath += LoadFromRuleSet;
+		setsSpreadSheetView.SaveByPath += SaveToRuleSet;
 	}
 
-	private void LoadFromRuleSet(string obj)
+	private void SaveToRuleSet(string ruleSetPath)
+		=> RulesetIO.SaveTo(ruleSetPath, rulesMainSource);
+
+	private void LoadFromRuleSet(string path)
 	{
-		throw new NotImplementedException();
+		var loadedRules = RulesetIO.LoadRulesetFile(path).ToList();
+		if (unfilteredRulesList.Any())
+		{
+			var loadedSeverities = unfilteredRulesList.Join(loadedRules, rule => rule.Id, rule => rule.id, (currentRule, loadedValue) => (currentRule, loadedValue));
+			foreach (var rule in loadedSeverities)
+				rule.currentRule.Severity = rule.loadedValue.severity;
+		}
 	}
 
 	private void UpdateRulesets(ClickEvent evt)
@@ -62,7 +76,7 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 	private void FilterRules(ChangeEvent<string> evt)
 	{
 		searchValue = evt.newValue;
-		rulesSpreadSheetView.Init(rulesList);
+		rulesSpreadSheetView.Init(filteredRulesList);
 	}
 
 	private void MapRulesExtractionButton()
@@ -74,13 +88,13 @@ public class RulesMulticolumnEditorWindow : EditorWindow
 	private void MapRulesToSpreadSheet()
 	{
 		rulesSpreadSheetView = rootVisualElement.Q<RulesTableView>();
-		rulesSpreadSheetView.Init(rulesList);
+		rulesSpreadSheetView.Init(filteredRulesList);
 	}
 
 	private void HandleLoadRules(ClickEvent _)
 	{
-		rules = RulesExtractor.ExtractRules();
-		rulesSpreadSheetView.Init(rulesList);
+		rulesMainSource = RulesExtractor.ExtractRules();
+		rulesSpreadSheetView.Init(filteredRulesList);
 	}
 
 	public void Clear() => rulesSpreadSheetView.Clear();

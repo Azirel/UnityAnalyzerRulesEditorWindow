@@ -12,16 +12,14 @@ namespace UnityEngine.UIElements
 		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits> { }
 
 		public event Action<string> LoadByPath;
+		public event Action<string> SaveByPath;
 
 		private string ruleSetsSearchFilter = "glob:\"Assets/**.ruleset\"";
-		private IEnumerable<string> ruleSetsPaths;
 
 		public void UpdateItems()
-		{
-			ruleSetsPaths = AssetDatabase.FindAssets(ruleSetsSearchFilter)
-				.Select(guid => AssetDatabase.GUIDToAssetPath(guid));
-			itemsSource = ruleSetsPaths.ToList();
-		}
+			=> itemsSource = AssetDatabase.FindAssets(ruleSetsSearchFilter)
+				.Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+				.ToList();
 
 		public void Init()
 		{
@@ -35,17 +33,23 @@ namespace UnityEngine.UIElements
 
 		}
 
-		private void BindSaveCell(VisualElement element, int arg2)
+		private void BindSaveCell(VisualElement element, int elementIndex)
 		{
 			var button = (element as Button);
 			button.text = "Save";
+			button.userData = itemsSource[elementIndex];
+			button.RegisterCallback<ClickEvent>(HandleSave);
 		}
 
-		private void BindLoadCell(VisualElement element, int arg2)
+		private void HandleSave(ClickEvent evt)
+			=> SaveByPath?.Invoke((evt.target as Button).userData as string);
+
+
+		private void BindLoadCell(VisualElement element, int elementIndex)
 		{
 			var button = (element as Button);
 			button.text = "Load";
-			button.userData = itemsSource[arg2];
+			button.userData = itemsSource[elementIndex];
 			button.RegisterCallback<ClickEvent>(HandleLoad);
 		}
 

@@ -22,28 +22,23 @@ namespace UnityEngine.UIElements
 		{
 			columns["ID"].makeCell = () => new Label();
 			columns["Title"].makeCell = () => new Label();
-			columns["Severity"].makeCell = () => new EnumField(default(DiagnosticSeverity));
+			columns["Severity"].makeCell = () => new SeverityField();
 			columns["ID"].bindCell = BindIdCell;
 			columns["Title"].bindCell = BindTitleCell;
 			columns["Severity"].bindCell = BindSeverityCell;
+			columns["Severity"].unbindCell = UnbindSeverityCell;
 		}
+
+		private void UnbindSeverityCell(VisualElement element, int arg2)
+			=> (element as SeverityField)?.UnbindRule();
 
 		private void BindSeverityCell(VisualElement element, int itemIndex)
 		{
-			var enumField = (element as EnumField);
+			var enumField = element as SeverityField;
 			var rule = rules[itemIndex];
-			rule.SeverityValueChange += UpdateSeverity;
-			enumField.userData = rule;
-			enumField.SetValueWithoutNotify(rule.Severity);
-			enumField.RegisterValueChangedCallback(HandleThisElementSeverityChange);
+			enumField.BindRule(rule);
 			enumField.RegisterValueChangedCallback(HandleSelectedElementsSeverityChange);
-
-			void UpdateSeverity(DiagnosticSeverity severity)
-				=> enumField.SetValueWithoutNotify(severity);
 		}
-
-		private void HandleThisElementSeverityChange(ChangeEvent<Enum> evt)
-			=> ((evt.target as EnumField).userData as AnalyzerRule).Severity = Enum.Parse<DiagnosticSeverity>(evt.newValue.ToString());
 
 		private void HandleSelectedElementsSeverityChange(ChangeEvent<Enum> evt)
 		{
