@@ -27,13 +27,18 @@ namespace Azirel
 		private RulesTableView rulesSpreadSheetView;
 		private RuleSetsTableView setsSpreadSheetView;
 
-		[MenuItem("Tools/Multicolumn window")]
+		[MenuItem("Tools/Rules Editor ")]
 		public static new void Show()
 			=> GetWindow<RulesEditorWindow>(nameof(RulesEditorWindow));
+
+		[MenuItem("Tools/Load cached")]
+		public static void LoadCachedRules()
+			=> GetWindow<RulesEditorWindow>().rulesMainSource = RulesExtractor.GetCachedRules();
 
 		protected void CreateGUI()
 		{
 			uxmlDocument.CloneTree(rootVisualElement);
+			rulesMainSource = RulesExtractor.GetCachedRules();
 			MapRulesExtractionButton();
 			MapSearch();
 			MapRulesToSpreadSheet();
@@ -94,10 +99,13 @@ namespace Azirel
 			rulesSpreadSheetView.Init(filteredRulesList);
 		}
 
-		private void HandleLoadRules(ClickEvent _)
+		private void HandleLoadRules(ClickEvent _) => ExtractAndCacheRules();
+
+		private void ExtractAndCacheRules()
 		{
 			rulesMainSource = RulesExtractor.ExtractRules();
 			rulesSpreadSheetView.Init(filteredRulesList);
+			RulesExtractor.CacheRules(rulesMainSource);
 		}
 
 		public void Clear() => rulesSpreadSheetView.Clear();

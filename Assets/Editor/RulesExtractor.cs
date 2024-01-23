@@ -17,15 +17,17 @@ namespace Azirel
 		private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
 		private const string cachedJsonKey = "AnalyzersJsonCache";
 
-		private IEnumerable<DiagnosticDescriptorEssentials> extractedDescriptors = Enumerable.Empty<DiagnosticDescriptorEssentials>();
-
 		public static void CacheRules(ILookup<string, AnalyzerRule> rules)
-			=> EditorPrefs.SetString(cachedJsonKey, JsonConvert.SerializeObject(rules));
+			=> EditorPrefs.SetString(cachedJsonKey, JsonConvert.SerializeObject(rules.SelectMany(group => group.ToList())));
 
 		public static ILookup<string, AnalyzerRule> GetCachedRules()
-			=> EditorPrefs.HasKey(cachedJsonKey)
-				? JsonConvert.DeserializeObject<Lookup<string, AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey))
+		{
+			var rules = JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey));
+			return 	EditorPrefs.HasKey(cachedJsonKey)
+				? JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(cachedJsonKey))
+			.ToLookup(keySelector: rule => rule.AnalyzerId, elementSelector: rule => rule)
 				: Utilities.EmptyLookup<string, AnalyzerRule>();
+		}
 
 		public static ILookup<string, AnalyzerRule> ExtractRules()
 			=> AssetDatabase.FindAssets(AnalyzersFilter)
