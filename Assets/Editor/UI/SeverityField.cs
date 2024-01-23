@@ -1,14 +1,19 @@
-﻿using System;
+﻿using Azirel;
+using System;
 
 namespace UnityEngine.UIElements
 {
 	public class SeverityField : EnumField
 	{
-		public new class UxmlFactory : UxmlFactory<SeverityField, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<SeverityField, UxmlTraits> 
+		{
+		}
 
 		private AnalyzerRule rule;
 
-		public SeverityField() : base(default(DiagnosticSeverity)) { }
+		public SeverityField() : base(default(DiagnosticSeverity))
+		{
+		}
 
 		public void BindRule(AnalyzerRule rule)
 		{

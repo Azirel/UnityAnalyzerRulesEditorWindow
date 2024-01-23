@@ -1,9 +1,7 @@
 {
     "name": "RulesEditor",
     "rootNamespace": "",
-    "references": [
-        ""
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor"
     ],

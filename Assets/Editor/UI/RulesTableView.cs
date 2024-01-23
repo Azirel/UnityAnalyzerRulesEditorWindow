@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Azirel;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,9 @@ namespace UnityEngine.UIElements
 {
 	public class RulesTableView : MultiColumnListView
 	{
-		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits>
+		{
+		}
 
 		private IList<AnalyzerRule> rules = Enumerable.Empty<AnalyzerRule>().ToList();
 

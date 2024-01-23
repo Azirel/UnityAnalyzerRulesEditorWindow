@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEditor;
 
@@ -9,7 +6,9 @@ namespace UnityEngine.UIElements
 {
 	public class RuleSetsTableView : MultiColumnListView
 	{
-		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits>
+		{
+		}
 
 		public event Action<string> LoadByPath;
 		public event Action<string> SaveByPath;
@@ -30,7 +29,6 @@ namespace UnityEngine.UIElements
 			columns["Path"].bindCell = BindPathCell;
 			columns["Load"].bindCell = BindLoadCell;
 			columns["Save"].bindCell = BindSaveCell;
-
 		}
 
 		private void BindSaveCell(VisualElement element, int elementIndex)
@@ -43,7 +41,6 @@ namespace UnityEngine.UIElements
 
 		private void HandleSave(ClickEvent evt)
 			=> SaveByPath?.Invoke((evt.target as Button).userData as string);
-
 
 		private void BindLoadCell(VisualElement element, int elementIndex)
 		{
