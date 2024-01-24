@@ -11,7 +11,7 @@ namespace Azirel
 	public class RulesExtractor
 	{
 		private const string AnalyzersFilter = "l:RoslynAnalyzer";
-		private const string ExtractorLocalPath = @"Assets\.RulesExtractorCLI\RulesExtracorCLI.exe";
+		private const string ExtractorLocalPath = "./Packages/com.azirel.rules-editor/.RulesExtractorCLI/RulesExtracorCLI.exe";
 		private const string CachedJsonKey = "AnalyzersJsonCache";
 		private static readonly string extractorPath;
 		private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
