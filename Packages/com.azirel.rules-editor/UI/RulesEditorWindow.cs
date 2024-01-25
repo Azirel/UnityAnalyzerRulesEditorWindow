@@ -32,7 +32,7 @@ namespace Azirel
 		protected void CreateGUI()
 		{
 			uxmlDocument.CloneTree(rootVisualElement);
-			//rulesMainSource = RulesExtractor.GetCachedRules();
+			rulesMainSource = RulesExtractor.GetCachedRules();
 			MapRulesExtractionButton();
 			MapSearch();
 			MapRulesToSpreadSheet();
@@ -99,7 +99,7 @@ namespace Azirel
 
 		private void ExtractAndCacheRules()
 		{
-			rulesMainSource = RulesExtractorEmbeded.ExtractAllRules();
+			rulesMainSource = RulesExtractor.ExtractRules();
 			rulesSpreadSheetView.Init(filteredRulesList);
 			RulesExtractor.CacheRules(rulesMainSource);
 		}
