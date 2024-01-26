@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Azirel
 {
@@ -41,9 +42,7 @@ namespace Azirel
 			=> Severity = severity;
 
 		public bool Match(string query)
-			=> String.IsNullOrEmpty(query)
-			|| GetSearchableContent().
-			Any(@string => @string.Contains(query));
+			=> GetSearchableContent().Any(text => Regex.IsMatch(text, $"(?i){query}"));
 
 		private IEnumerable<string> GetSearchableContent()
 		{
