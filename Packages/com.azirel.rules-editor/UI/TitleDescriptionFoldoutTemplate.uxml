@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:Foldout text="Foldout" name="TitleDescriptionFoldout" value="false" style="flex-grow: 0;">
-        <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Description" style="flex-shrink: 1; flex-grow: 1; flex-wrap: wrap; white-space: normal;" />
+    <ui:Foldout text="Foldout" name="TitleDescriptionFoldout" value="false">
+        <ui:TextField picking-mode="Ignore" readonly="true" name="Description" multiline="true" tooltip="Description" style="white-space: normal;" />
     </ui:Foldout>
 </ui:UXML>
