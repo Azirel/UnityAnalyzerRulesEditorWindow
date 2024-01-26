@@ -12,9 +12,10 @@
         </ui:Foldout>
         <ui:Button text="Extract analyer rules" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadAnalyzers" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; min-height: 30px;" />
         <ui:TextField picking-mode="Ignore" label="Search" name="Search" style="flex-direction: row;" />
-        <ui:RulesTableView selection-type="Multiple" name="RulesTable" style="flex-grow: 1;">
+        <ui:RulesTableView selection-type="Multiple" name="RulesTable" virtualization-method="DynamicHeight" style="flex-grow: 1;">
             <ui:Columns>
                 <ui:Column name="ID" title="ID" width="85" />
+                <ui:Column name="Category" title="Category" width="100" />
                 <ui:Column name="Title" title="Title" width="500" />
                 <ui:Column name="Severity" title="Severity" width="80" />
             </ui:Columns>

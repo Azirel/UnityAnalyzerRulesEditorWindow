@@ -8,7 +8,13 @@ namespace UnityEngine.UIElements
 {
 	public class RulesTableView : MultiColumnListView
 	{
+		private const string titleTemplateGUID = "7af210c69ac695c46bf76f62fff5a159";
+		private readonly VisualTreeAsset ruleTitleElement;
+
 		private IList<AnalyzerRule> rules = Enumerable.Empty<AnalyzerRule>().ToList();
+
+		public RulesTableView()
+			=> ruleTitleElement = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetDatabase.GUIDToAssetPath(titleTemplateGUID));
 
 		public void Init(IList<AnalyzerRule> rules)
 		{
@@ -20,13 +26,19 @@ namespace UnityEngine.UIElements
 		private void MapCellsBindings()
 		{
 			columns["ID"].makeCell = () => new Label();
-			columns["Title"].makeCell = () => new Label();
+			columns["Category"].makeCell = () => new Label();
+			columns["Title"].makeCell = () => ruleTitleElement.Instantiate();
 			columns["Severity"].makeCell = () => new SeverityField();
 			columns["ID"].bindCell = BindIdCell;
+			columns["Category"].bindCell = BindCategory;
 			columns["Title"].bindCell = BindTitleCell;
+			columns["Title"].stretchable = true;
 			columns["Severity"].bindCell = BindSeverityCell;
 			columns["Severity"].unbindCell = UnbindSeverityCell;
 		}
+
+		private void BindCategory(VisualElement element, int itemIndex)
+			=> (element as Label).text = rules[itemIndex].Descriptor.Category;
 
 		private void UnbindSeverityCell(VisualElement element, int arg2)
 			=> (element as SeverityField)?.UnbindRule();
@@ -49,12 +61,15 @@ namespace UnityEngine.UIElements
 		}
 
 		private void BindTitleCell(VisualElement element, int itemIndex)
-			=> (element as Label).text = rules[itemIndex].Descriptor.Title;
+		{
+			(element.Q("TitleDescriptionFoldout") as Foldout).text = rules[itemIndex].Descriptor.Title;
+			(element.Q(name: "Description") as Label).text = rules[itemIndex].Descriptor.Description;
+		}
 
 		private void BindIdCell(VisualElement element, int itemIndex)
 		{
 			var rule = rules[itemIndex];
-			var label = (element as Label);
+			var label = element as Label;
 			label.text = String.IsNullOrEmpty(rule.Descriptor.HelpLinkUri)
 				? rule.Id : $"<a href=\"{rule.Descriptor.HelpLinkUri}\">{rule.Id}</a>";
 		}
