@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "displayName": "Roslyn analyzers rules editor",
   "description": "Package for editing your .ruleset files from within Unity",
-  "unity": "2022.3" 
+  "unity": "2022.3" ,
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+ }
 }
