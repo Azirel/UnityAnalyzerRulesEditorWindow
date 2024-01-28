@@ -15,7 +15,7 @@ namespace UnityEngine.UIElements
 				.Select(guid => AssetDatabase.GUIDToAssetPath(guid))
 				.ToList();
 
-		public void Init()
+		private void Init()
 		{
 			columns["Path"].makeCell = () => new Label();
 			columns["Load"].makeCell = () => new Button();
@@ -51,6 +51,14 @@ namespace UnityEngine.UIElements
 		private void BindPathCell(VisualElement element, int itemIndex)
 			=> (element as Label).text = itemsSource[itemIndex] as string;
 
-		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<RuleSetsTableView, UxmlTraits>
+		{
+			public override VisualElement Create(IUxmlAttributes bag, CreationContext cc)
+			{
+				var result =  base.Create(bag, cc) as RuleSetsTableView;
+				result.Init();
+				return result;
+			}
+		}
 	}
 }

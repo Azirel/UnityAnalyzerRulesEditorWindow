@@ -11,7 +11,7 @@ namespace Azirel
 	public class RulesExtractor
 	{
 		private const string AnalyzersFilter = "l:RoslynAnalyzer";
-		private const string ExtractorLocalPath = "./Packages/com.azirel.rules-editor/.RulesExtractorCLI/RulesExtracorCLI.exe";
+		private const string ExtractorLocalPath = "./Packages/com.azirel.rules-editor/.RulesExtractorCLI/RulesExtracorCLI";
 		private const string CachedJsonKey = "AnalyzersJsonCache";
 		private static readonly string extractorPath;
 		private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
@@ -60,12 +60,13 @@ namespace Azirel
 			return Path.GetFileNameWithoutExtension(assetPath);
 		}
 
+#if UNITY_EDITOR_WIN
 		private static string StartProcessAndGetOutput(string exePath, string arguments)
 		{
 			using var extractorProcess = new Process();
 			extractorProcess.StartInfo.UseShellExecute = false;
 			extractorProcess.StartInfo.RedirectStandardOutput = true;
-			extractorProcess.StartInfo.FileName = exePath;
+			extractorProcess.StartInfo.FileName = exePath + ".exe";
 			extractorProcess.StartInfo.Arguments = arguments;
 			extractorProcess.StartInfo.CreateNoWindow = true;
 			_ = extractorProcess.Start();
@@ -74,5 +75,22 @@ namespace Azirel
 			extractorProcess.WaitForExit();
 			return outputText;
 		}
+#else
+		private static string StartProcessAndGetOutput(string exePath, string arguments)
+		{
+			using var extractorProcess = new Process();
+			extractorProcess.StartInfo.UseShellExecute = false;
+			extractorProcess.StartInfo.RedirectStandardOutput = true;
+			extractorProcess.StartInfo.FileName = "dotnet";
+			extractorProcess.StartInfo.ArgumentList.Add(exePath + ".dll");
+			extractorProcess.StartInfo.ArgumentList.Add(arguments);
+			extractorProcess.StartInfo.CreateNoWindow = true;
+			_ = extractorProcess.Start();
+			using var output = extractorProcess.StandardOutput;
+			var outputText = output.ReadToEnd();
+			extractorProcess.WaitForExit();
+			return outputText;
+		}
+#endif
 	}
 }

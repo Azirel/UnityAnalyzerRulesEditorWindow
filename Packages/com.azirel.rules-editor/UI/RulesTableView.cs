@@ -17,9 +17,8 @@ namespace UnityEngine.UIElements
 		public RulesTableView()
 			=> ruleTitleElement = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetDatabase.GUIDToAssetPath(titleTemplateGUID));
 
-		public void Init(IList<AnalyzerRule> rules)
+		public void UpdateItemSource(IList<AnalyzerRule> rules)
 		{
-			MapCellsBindings();
 			this.rules = rules;
 			itemsSource = rules as IList;
 		}
@@ -75,6 +74,14 @@ namespace UnityEngine.UIElements
 				? rule.Id : $"<a href=\"{rule.Descriptor.HelpLinkUri}\">{rule.Id}</a>";
 		}
 
-		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<RulesTableView, UxmlTraits>
+		{
+			public override VisualElement Create(IUxmlAttributes bag, CreationContext cc)
+			{
+				var result = base.Create(bag, cc) as RulesTableView;
+				result.MapCellsBindings();
+				return result;
+			}
+		}
 	}
 }

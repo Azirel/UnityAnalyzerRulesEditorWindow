@@ -45,7 +45,6 @@ namespace Azirel
 		{
 			setsSpreadSheetView = rootVisualElement.Q<RuleSetsTableView>();
 			setsSpreadSheetView.UpdateItems();
-			setsSpreadSheetView.Init();
 			var updateRuleSetsButton = rootVisualElement.Q<Button>(name: "UpdateRulesets");
 			updateRuleSetsButton.RegisterCallback<ClickEvent>(HandleUpdateRulesets);
 			setsSpreadSheetView.LoadByPath += HandleLoadFromRuleSet;
@@ -80,7 +79,7 @@ namespace Azirel
 		private void HandleFilterChange(ChangeEvent<string> evt)
 		{
 			searchValue = evt.newValue;
-			rulesSpreadSheetView.Init(filteredRulesList);
+			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
 		}
 
 		private void MapRulesExtractionButton()
@@ -92,7 +91,7 @@ namespace Azirel
 		private void MapRulesToSpreadSheet()
 		{
 			rulesSpreadSheetView = rootVisualElement.Q<RulesTableView>();
-			rulesSpreadSheetView.Init(filteredRulesList);
+			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
 		}
 
 		private void HandleLoadRules(ClickEvent _) => ExtractAndCacheRules();
@@ -100,7 +99,7 @@ namespace Azirel
 		private void ExtractAndCacheRules()
 		{
 			rulesMainSource = RulesExtractor.ExtractRules();
-			rulesSpreadSheetView.Init(filteredRulesList);
+			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
 			RulesExtractor.CacheRules(rulesMainSource);
 		}
 	}
