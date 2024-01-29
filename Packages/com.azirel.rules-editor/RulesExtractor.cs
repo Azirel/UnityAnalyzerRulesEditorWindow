@@ -15,6 +15,7 @@ namespace Azirel
 		private const string CachedJsonKey = "AnalyzersJsonCache";
 		private static readonly string extractorPath;
 		private static string ExtractorPath => String.IsNullOrEmpty(extractorPath) ? Path.GetFullPath(ExtractorLocalPath) : extractorPath;
+		private static string dotnetPath;
 
 		public static void CacheRules(ILookup<string, AnalyzerRule> rules)
 			=> EditorPrefs.SetString(CachedJsonKey, JsonConvert.SerializeObject(rules.SelectMany(group => group.ToList())));
@@ -22,7 +23,7 @@ namespace Azirel
 		public static ILookup<string, AnalyzerRule> GetCachedRules()
 		{
 			var rules = JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(CachedJsonKey));
-			return 	EditorPrefs.HasKey(CachedJsonKey)
+			return EditorPrefs.HasKey(CachedJsonKey)
 				? JsonConvert.DeserializeObject<List<AnalyzerRule>>(EditorPrefs.GetString(CachedJsonKey))
 			.ToLookup(keySelector: rule => rule.AnalyzerId, elementSelector: rule => rule)
 				: Utilities.EmptyLookup<string, AnalyzerRule>();
@@ -76,12 +77,30 @@ namespace Azirel
 			return outputText;
 		}
 #else
-		private static string StartProcessAndGetOutput(string exePath, string arguments)
+		private static string GetDotnetPath()
 		{
 			using var extractorProcess = new Process();
 			extractorProcess.StartInfo.UseShellExecute = false;
 			extractorProcess.StartInfo.RedirectStandardOutput = true;
-			extractorProcess.StartInfo.FileName = "dotnet";
+			extractorProcess.StartInfo.FileName = "/bin/bash";
+			extractorProcess.StartInfo.Arguments = "-lc \"which dotnet\"";
+			extractorProcess.StartInfo.CreateNoWindow = true;
+			_ = extractorProcess.Start();
+			using var output = extractorProcess.StandardOutput;
+			var outputText = output.ReadToEnd();
+			extractorProcess.WaitForExit();
+			return outputText.TrimEnd('\n', 'r');
+		}
+
+		private static string StartProcessAndGetOutput(string exePath, string arguments)
+		{
+			if (String.IsNullOrEmpty(dotnetPath))
+				dotnetPath = GetDotnetPath();
+
+			using var extractorProcess = new Process();
+			extractorProcess.StartInfo.UseShellExecute = false;
+			extractorProcess.StartInfo.RedirectStandardOutput = true;
+			extractorProcess.StartInfo.FileName = dotnetPath;
 			extractorProcess.StartInfo.ArgumentList.Add(exePath + ".dll");
 			extractorProcess.StartInfo.ArgumentList.Add(arguments);
 			extractorProcess.StartInfo.CreateNoWindow = true;
