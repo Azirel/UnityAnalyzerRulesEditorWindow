@@ -64,7 +64,10 @@ namespace UnityEngine.UIElements
 		private void BindTitleCell(VisualElement element, int itemIndex)
 		{
 			(element.Q("TitleDescriptionFoldout") as Foldout).text = rules[itemIndex].Descriptor.Title;
-			(element.Q(name: "Description") as TextField).value = rules[itemIndex].Descriptor.Description;
+			var description = rules[itemIndex].Descriptor.Description;
+			var descriptionArea = (element.Q(name: "Description") as TextField);
+			descriptionArea.visible = !String.IsNullOrEmpty(description);
+			descriptionArea.value = description;
 		}
 
 		private void BindIdCell(VisualElement element, int itemIndex)
