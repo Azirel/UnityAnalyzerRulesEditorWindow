@@ -11,16 +11,18 @@ namespace UnityEngine.UIElements
 		public event Action<string> SaveByPath;
 
 		public void UpdateItems()
-			=> itemsSource = AssetDatabase.FindAssets(ruleSetsSearchFilter)
+		{
+			itemsSource = AssetDatabase.FindAssets(ruleSetsSearchFilter)
 				.Select(guid => AssetDatabase.GUIDToAssetPath(guid))
 				.ToList();
+			Rebuild();
+		}
 
 		private void Init()
 		{
 			columns["Path"].makeCell = () => new Label();
 			columns["Load"].makeCell = () => new Button();
 			columns["Save"].makeCell = () => new Button();
-
 			columns["Path"].bindCell = BindPathCell;
 			columns["Load"].bindCell = BindLoadCell;
 			columns["Save"].bindCell = BindSaveCell;

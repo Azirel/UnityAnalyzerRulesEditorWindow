@@ -21,6 +21,7 @@ namespace UnityEngine.UIElements
 		{
 			this.rules = rules;
 			itemsSource = rules as IList;
+			Rebuild();
 		}
 
 		private void MapCellsBindings()
