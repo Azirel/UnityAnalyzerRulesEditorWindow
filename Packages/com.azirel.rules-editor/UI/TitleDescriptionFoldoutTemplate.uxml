@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:Foldout text="Foldout" name="TitleDescriptionFoldout" value="false">
-        <ui:TextField picking-mode="Ignore" readonly="true" name="Description" multiline="true" tooltip="Description" style="white-space: normal;" />
+    <ui:Foldout text="Foldout" name="TitleDescriptionFoldout" value="false" view-data-key="1">
+        <ui:TextField picking-mode="Ignore" readonly="true" name="Description" multiline="true" tooltip="Description" view-data-key="1" style="white-space: normal;" />
     </ui:Foldout>
 </ui:UXML>
