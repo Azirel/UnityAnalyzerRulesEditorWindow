@@ -63,11 +63,14 @@ namespace UnityEngine.UIElements
 
 		private void BindTitleCell(VisualElement element, int itemIndex)
 		{
+			var foldout = (element.Q("TitleDescriptionFoldout") as Foldout);
 			(element.Q("TitleDescriptionFoldout") as Foldout).text = rules[itemIndex].Descriptor.Title;
 			var description = rules[itemIndex].Descriptor.Description;
+			var anyDescription = !String.IsNullOrEmpty(description);
 			var descriptionArea = (element.Q(name: "Description") as TextField);
-			descriptionArea.visible = !String.IsNullOrEmpty(description);
 			descriptionArea.value = description;
+			descriptionArea.style.display = anyDescription ? DisplayStyle.Flex : DisplayStyle.None;
+			foldout.Q(name: "unity-checkmark").style.opacity = anyDescription ? 1 : 0;
 		}
 
 		private void BindIdCell(VisualElement element, int itemIndex)
