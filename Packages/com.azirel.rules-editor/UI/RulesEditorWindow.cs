@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -96,9 +97,9 @@ namespace Azirel
 
 		private void HandleLoadRules(ClickEvent _) => ExtractAndCacheRules();
 
-		private void ExtractAndCacheRules()
+		private async Task ExtractAndCacheRules()
 		{
-			rulesMainSource = RulesExtractor.ExtractRules();
+			rulesMainSource = await RulesExtractorAsync.ExtractRules();
 			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
 			RulesExtractor.CacheRules(rulesMainSource);
 		}
