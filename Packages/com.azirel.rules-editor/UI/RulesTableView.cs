@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace UnityEngine.UIElements
 {
-	public class RulesTableView : MultiColumnListView
+	internal class RulesTableView : MultiColumnListView
 	{
 		private const string titleTemplateGUID = "7af210c69ac695c46bf76f62fff5a159";
 		private const string labelTemplateGUID = "8d99f2094daff444d874d3fcdb139649";
@@ -22,7 +22,7 @@ namespace UnityEngine.UIElements
 			labelCellElement = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetDatabase.GUIDToAssetPath(labelTemplateGUID));
 		}
 
-		public void UpdateItemSource(IList<AnalyzerRule> rules)
+		internal void UpdateItemSource(IList<AnalyzerRule> rules)
 		{
 			this.rules = rules;
 			itemsSource = rules as IList;

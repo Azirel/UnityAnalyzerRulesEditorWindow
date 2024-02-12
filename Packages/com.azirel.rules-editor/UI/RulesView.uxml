@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:RulesView name="RulesView" style="flex-grow: 1;">
+        <ui:TextField picking-mode="Ignore" label="Search" name="Search" style="flex-direction: row;" />
+        <ui:RulesTableView selection-type="Multiple" name="RulesTable" virtualization-method="DynamicHeight" style="flex-grow: 1;">
+            <ui:Columns>
+                <ui:Column name="ID" title="ID" width="85" />
+                <ui:Column name="Category" title="Category" width="100" />
+                <ui:Column name="Title" title="Title" width="500" />
+                <ui:Column name="Severity" title="Severity" width="80" />
+            </ui:Columns>
+        </ui:RulesTableView>
+    </ui:RulesView>
+</ui:UXML>

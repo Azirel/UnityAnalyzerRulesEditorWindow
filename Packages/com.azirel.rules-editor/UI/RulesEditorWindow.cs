@@ -11,7 +11,7 @@ namespace Azirel
 	{
 		[SerializeField] private VisualTreeAsset uxmlDocument;
 		private string searchValue = String.Empty;
-		private RulesTableView rulesSpreadSheetView;
+		private RulesView rulesView;
 		private RuleSetsTableView setsSpreadSheetView;
 
 		private ILookup<string, AnalyzerRule> rulesMainSource = Utilities.EmptyLookup<string, AnalyzerRule>();
@@ -25,7 +25,7 @@ namespace Azirel
 			.Where(rule => rule.Match(searchValue))
 			.ToList();
 
-		[MenuItem("Tools/Rules Editor ")]
+		[MenuItem("Tools/Rules Editor")]
 		public static new void Show()
 			=> GetWindow<RulesEditorWindow>(nameof(RulesEditorWindow));
 
@@ -33,10 +33,17 @@ namespace Azirel
 		{
 			uxmlDocument.CloneTree(rootVisualElement);
 			rulesMainSource = RulesExtractor.GetCachedRules();
+			MapRulesView();
 			MapRulesExtractionButton();
-			MapSearch();
-			MapRulesToSpreadSheet();
 			MapRulesets();
+		}
+
+		private void MapRulesView()
+		{
+			rulesView = rootVisualElement.Q<RulesView>();
+			rulesView.RegisterRulesUpdateButtonCallback(HandleLoadRules);
+			rulesView.RegisterSearchValueChangedCallback(HandleFilterChange);
+			rulesView.UpdateItemSource(filteredRulesList);
 		}
 
 		private void OnEnable() => searchValue = String.Empty;
@@ -70,16 +77,10 @@ namespace Azirel
 		private void HandleUpdateRulesets(ClickEvent evt)
 			=> setsSpreadSheetView.UpdateItems();
 
-		private void MapSearch()
-		{
-			var searchField = rootVisualElement.Q<TextField>(name: "Search");
-			_ = searchField.RegisterValueChangedCallback(HandleFilterChange);
-		}
-
 		private void HandleFilterChange(ChangeEvent<string> evt)
 		{
 			searchValue = evt.newValue;
-			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
+			rulesView.UpdateItemSource(filteredRulesList);
 		}
 
 		private void MapRulesExtractionButton()
@@ -88,18 +89,12 @@ namespace Azirel
 			loadButton.RegisterCallback<ClickEvent>(HandleLoadRules);
 		}
 
-		private void MapRulesToSpreadSheet()
-		{
-			rulesSpreadSheetView = rootVisualElement.Q<RulesTableView>();
-			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
-		}
-
 		private void HandleLoadRules(ClickEvent _) => ExtractAndCacheRules();
 
 		private void ExtractAndCacheRules()
 		{
 			rulesMainSource = RulesExtractor.ExtractRules();
-			rulesSpreadSheetView.UpdateItemSource(filteredRulesList);
+			rulesView.UpdateItemSource(filteredRulesList);
 			RulesExtractor.CacheRules(rulesMainSource);
 		}
 	}
